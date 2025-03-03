@@ -45,8 +45,19 @@ jobs:
         ./nC.bat -make
         # Rebuild & perform a number of tests with ant
         ./nC.bat -v
-        zip -r build-artifacts.zip ./
       shell: bash
+
+    - name: Package artifacts to ZIP
+      if: ${{ matrix.runs-on == 'windows-latest' }}
+      run: |
+        $sourceDirs = "./"  # 根据实际路径调整
+        $artifactFiles = Get-ChildItem -Path $sourceDirs -Recurse -ErrorAction SilentlyContinue
+        if ($artifactFiles) {
+          Compress-Archive -Path $sourceDirs -DestinationPath build-artifacts.zip
+        } else {
+          Write-Host "##[warning] No artifacts found to package."
+        }
+      shell: powershell
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
