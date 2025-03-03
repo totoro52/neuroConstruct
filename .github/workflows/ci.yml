@@ -44,7 +44,7 @@ jobs:
         # make
         ./nC.bat -make
         # Rebuild & perform a number of tests with ant
-        ./nC.bat -v
+        ant testcore
       shell: bash
 
     - name: Package artifacts to ZIP
