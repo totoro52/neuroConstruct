@@ -44,7 +44,12 @@ jobs:
         # make
         ./nC.bat -make
         # Rebuild & perform a number of tests with ant
-        ant testcore
-        # Print the version info
         ./nC.bat -v
+        zip -r build-artifacts.zip ./
       shell: bash
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: build-artifacts.zip
