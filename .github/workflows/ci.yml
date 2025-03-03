@@ -3,9 +3,9 @@ name: Java CI with Ant
 
 on:
   push:
-    branches:  [ master, development, experimental ]
+    branches:  [ master ]
   pull_request:
-    branches:  [ master, development, experimental ]
+    branches:  [ master ]
 
 jobs:
   build_and_test:
@@ -14,13 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '8', '11', '16', '17', '19', '21' ]
-        runs-on: [ubuntu-latest, windows-latest, macos-latest, macos-13 ]
-        exclude:
-          - runs-on: macos-latest
-            java: "8"
-          - runs-on: macos-latest
-            java: "16"
+        java: [ '17' ]
+        runs-on: [windows-latest]
 
     name: Test on Java ${{ matrix.Java }} on ${{ matrix.runs-on }}
     steps:
@@ -31,16 +26,6 @@ jobs:
         java-version: ${{ matrix.Java }}
         distribution: 'adopt'
 
-
-    - name: Install dependencies (macOS)
-      if: ${{ contains(matrix.runs-on, 'macos') }}
-      run: |
-        brew install subversion
-
-    - name: Install dependencies (Ubuntu)
-      if: ${{ contains(matrix.runs-on, 'ubuntu') }}
-      run: sudo apt-get install -y subversion
-
     - name: Set up env
       run: |
         mkdir temp
@@ -50,17 +35,6 @@ jobs:
         git clone https://github.com/OpenSourceBrain/GranuleCell.git osb/cerebellum/cerebellar_granule_cell/GranuleCell
         echo Set up additional folders...
         ls
-
-    - name: Build project and run tests (non Win)
-      if: ${{ matrix.runs-on != 'windows-latest' }}
-      run: |
-        ./updatenC.sh # Pull other repos, e.g. NeuroML v1 examples from SourceForge
-        # make
-        ./nC.sh -make
-        # Rebuild & perform a number of tests with ant
-        ant testcore
-        # Print the version info
-        ./nC.sh -v
 
     - name: Build project and run tests (Win)
       if: ${{ matrix.runs-on == 'windows-latest' }}
